@@ -1,6 +1,7 @@
 # PCD — Phase Coupling Decomposition para iEEG
 Bautista Pelossi Schweizer
-**Interfaces Cerebro-Computadora (BCI)** · Facultad de Ingeniería Química, Universidad Nacional del Litroal· 
+
+**Interfaces Cerebro-Computadora (BCI)** · Facultad de Ingeniería Química, Universidad Nacional del Litroal · Licenciatura en Ciencia de Datos
 
 Implementación en Python de **Phase Coupling Decomposition (PCD)** (Peterson et al., 2024), un filtrado espacial supervisado que remueve el artefacto acústico del habla en registros intracraneales (iEEG). Tiene cuatro etapas: estimación de la banda del artefacto (**SAFB**), descomposición espacio-espectral (**SSD**), optimización del acoplamiento de fase (**PCO**) y reconstrucción de la señal limpia.
 
