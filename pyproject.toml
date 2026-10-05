@@ -1,0 +1,21 @@
+[project]
+name = "pcd-ieeg"
+version = "0.1.0"
+description = "Phase Coupling Decomposition (PCD) para remover artefactos acústicos del habla en iEEG"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "mne>=1.12.1",
+    "numpy>=2.2.6",
+    "pymatreader>=1.3.2",
+    "scikit-learn>=1.7.2",
+    "scipy>=1.15.3",
+]
+
+[build-system]
+requires = ["uv_build>=0.10.2,<0.11"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "src"
+module-root = ""
