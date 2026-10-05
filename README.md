@@ -1,7 +1,7 @@
 # PCD — Phase Coupling Decomposition para iEEG
 Bautista Pelossi Schweizer
 
-**Interfaces Cerebro-Computadora (BCI)** · Facultad de Ingeniería Química, Universidad Nacional del Litroal 
+**Interfaces Cerebro-Computadora (BCI)** · Facultad de Ingeniería Química, Universidad Nacional del Litoral
 
 Implementación en Python de **Phase Coupling Decomposition (PCD)** (Peterson et al., 2024), un filtrado espacial supervisado que remueve el artefacto acústico del habla en registros intracraneales (iEEG). Tiene cuatro etapas: estimación de la banda del artefacto (**SAFB**), descomposición espacio-espectral (**SSD**), optimización del acoplamiento de fase (**PCO**) y reconstrucción de la señal limpia.
 
@@ -67,7 +67,7 @@ estimate_safb                       whiten
 
 ```
 bci-pcd/
-├── data/                  ← datos simulados (.mat)
+├── data/                  ← datos 
 ├── notebooks/             ← ejemplos
 ├── src/
 │   ├── safb.py            ← estimación de la banda del artefacto (PSD + ajuste gaussiano)
@@ -159,34 +159,6 @@ W_ssd, lambda_ssd = fit_ssd(X_white.real, sfreq, signal_band=(110, 150))
 print(lambda_ssd.round(3))          # el primer λ se separa claramente del resto
 print(select_n_components(lambda_ssd))
 ```
-
----
-
-## Datos
-
-Los `.mat` de `data/` se generan con el toolkit de simulación del repositorio original y se leen con `pymatreader.read_mat`. Al leerlos:
-
-- MATLAB guarda los datos en tiempo × canales; transponer a `(N_c, N_s)`.
-- Los índices de MATLAB empiezan en 1; restar 1 antes de usarlos en Python.
-
-Entradas que necesita el método:
-
-| Variable | Forma | Descripción |
-|---|---|---|
-| `X` | `(N_c, N_s)` | Registro iEEG para ajustar el modelo |
-| `z` | `(N_s,)` | Audio registrado, sincronizado con `X` |
-| `sfreq` | escalar | Frecuencia de muestreo (Hz) |
-| `f0` | escalar o arreglo | Frecuencia fundamental anotada (Hz) |
-
----
-
-## Validación
-
-Se compara contra la implementación MATLAB de los autores por **métricas**, no elemento a elemento: los filtros SSD tienen signo y escala arbitrarios, PCO depende de la inicialización y el SSD de MNE define el ruido distinto.
-
-- Similitud coseno (en valor absoluto) entre patrones.
-- MVL alcanzado por componente.
-- MSE normalizado y correlación de la señal reconstruida.
 
 ---
 

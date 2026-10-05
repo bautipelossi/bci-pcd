@@ -1,14 +1,6 @@
-"""Blanqueo y Spatio-Spectral Decomposition (SSD), primer paso de PCD.
-
-References
-----------
-Nikulin, V. V., Nolte, G., & Curio, G. (2011). A novel method for reliable and fast
-extraction of neuronal EEG/MEG oscillations on the basis of spatio-spectral
-decomposition. NeuroImage, 55(4), 1528-1535.
-
-Peterson, V., et al. (2024). A supervised data-driven spatial filter denoising method
-for acoustic-induced artifacts in intracranial electrophysiological recordings.
-Imaging Neuroscience, 2, 1-22. doi:10.1162/imag_a_00301
+"""Blanqueo y Spatio-Spectral Decomposition (SSD).
+ Primera etapa de PCD
+ Bautista Pelossi Schweizer
 """
 
 from __future__ import annotations
@@ -66,8 +58,7 @@ def whiten(X: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     if rank < X.shape[0]:
         raise ValueError(
             f"Los datos tienen rango {rank} con {X.shape[0]} canales, así que no "
-            "se pueden blanquear. Suele pasar después de una referencia común "
-            "(CAR); quitá un canal por cada dimensión perdida."
+            "se pueden blanquear. Suele pasar después de una referencia común (CAR) "
         )
 
     M = eigenvectors / np.sqrt(eigenvalues)
@@ -107,18 +98,18 @@ def fit_ssd(
 
     Notes
     -----
-    - **Ruido.** ``mne.decoding.SSD`` define el ruido como
+    - Ruido. ``mne.decoding.SSD`` define el ruido como
       ``filter(noise_band) - filter(signal_band)``, es decir, los flancos
       alrededor de la SAFB dentro de ``noise_band``.
-    - **Autovalores.** MNE resuelve ``eigh(C_s, C_n)``, que da el cociente
+    - Autovalores. MNE resuelve ``eigh(C_s, C_n)``, que da el cociente
       señal/ruido λ ∈ (0, ∞). Se devuelve λ / (1 + λ), que es la fracción de
       potencia en la banda de señal, ``w' C_s w / w' (C_s + C_n) w``. Al quedar
       acotado, el participation ratio no lo dominan unas pocas componentes con
       λ muy grande.
-    - **Sin regularización ni restricción.** ``reg=None`` usa la covarianza
+    - Sin regularización ni restricción.``reg=None`` usa la covarianza
       empírica y ``restr_type=None`` evita proyectar a un subespacio de menor
       rango. El rango completo ya lo garantiza :func:`whiten`.
-    - **Orden.** ``sort_by_spectral_ratio=False`` mantiene el orden por
+    - Orden. ``sort_by_spectral_ratio=False`` mantiene el orden por
       autovalor, en lugar de reordenar por el cociente espectral de la PSD.
     """
     iir_params = {"order": filter_order, "ftype": "butter"}

@@ -79,12 +79,6 @@ def fit_gaussian_peak(
         Centro de la gaussiana ajustada (Hz).
     fwhm : float
         FWHM de la gaussiana ajustada (Hz).
-
-    Notes
-    -----
-    Ajuste por mínimos cuadrados no lineales (``scipy.optimize.curve_fit``) con
-    la altura acotada a valores no negativos, para que el ajuste no pueda
-    describir un valle en lugar de un pico.
     """
     psd = np.asarray(psd, dtype=float)
     (_, center, fwhm), _ = curve_fit(

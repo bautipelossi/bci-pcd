@@ -1,0 +1,10 @@
+# Datos del repositorio original (Brain-Modulation-Lab/PCD): se descargan aparte
+data/*
+!data/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ipynb_checkpoints/
