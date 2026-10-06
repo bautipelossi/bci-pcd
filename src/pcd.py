@@ -73,7 +73,7 @@ class PCD:
     noise_band : tuple of float, default (4.0, 240.0)
         Band-pass de ruido de SSD, en Hz.
     filter_order : int, default 5
-        Orden de los Butterworth de SSD.
+        Orden de los filtros de SSD.
     n_components : int, float or "PR", default "PR"
         Cómo elegir k, la cantidad de componentes SSD que pasan a PCO
         (ver :func:`src.ssd.select_n_components`).
@@ -113,12 +113,6 @@ class PCD:
     ``A_pcd_ = pinv(W_pcd_).T``, así que cada patrón es una columna. La
     implementación de los autores guarda ``pinv(W_pcd)`` con los patrones en
     las filas.
-
-    References
-    ----------
-    Peterson, V., et al. (2024). A supervised data-driven spatial filter
-    denoising method for speech artifacts in intracranial electrophysiological
-    recordings. Imaging Neuroscience, 2, 1-22. doi:10.1162/imag_a_00301
     """
 
     def __init__(
