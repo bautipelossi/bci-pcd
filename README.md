@@ -72,11 +72,11 @@ bci-pcd/
 ├── src/
 │   ├── safb.py            ← estimación de la banda del artefacto (PSD + ajuste gaussiano)
 │   ├── ssd.py             ← blanqueo, SSD (MNE) y elección de k
-│   ├── pco.py             ← optimización de MVL                    (pendiente)
-│   ├── pcd.py             ← clase PCD: fit / transform / apply     (pendiente)
+│   ├── pco.py             ← optimización de MVL                    
+│   ├── pcd.py             ← clase PCD: fit / transform / apply    
 │   └── __init__.py
 ├── tests/                 ← tests con pytest
-├── validation/            ← comparación contra la implementación MATLAB
+├── validation/           
 ├── pyproject.toml
 └── README.md
 ```
