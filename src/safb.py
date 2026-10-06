@@ -1,4 +1,6 @@
 """Estimación de la banda de frecuencia del artefacto acústico (SAFB).
+Primera etapa de PCD
+Bautista Pelossi Schweizer
 
 La SAFB (speech artifact frequency band) es la banda [fl, fh] alrededor de la
 frecuencia fundamental F0 del habla donde se concentra el artefacto. Se estima
@@ -12,7 +14,7 @@ import warnings
 
 import numpy as np
 from numpy.typing import ArrayLike
-from scipy.optimize import curve_fit
+from scipy.optimize import minimize
 from scipy.signal import welch
 
 # Ancho (Hz) de las bandas de respaldo
@@ -49,9 +51,23 @@ def estimate_audio_psd(z: ArrayLike, sfreq: float) -> tuple[np.ndarray, np.ndarr
     return welch(np.ravel(z), fs=sfreq, nperseg=n_per_segment, nfft=nfft)
 
 
-def _gaussian(freqs: np.ndarray, height: float, center: float, fwhm: float) -> np.ndarray:
-    """Gaussiana parametrizada por su FWHM (ancho a media altura)."""
-    return height * np.exp(-4 * np.log(2) * ((freqs - center) / fwhm) ** 2)
+def _gaussian(freqs: np.ndarray, center: float, fwhm: float) -> np.ndarray:
+    """Gaussiana de altura 1 parametrizada por su FWHM (ancho a media altura)."""
+    return np.exp(-4 * np.log(2) * ((freqs - center) / fwhm) ** 2)
+
+
+def _fit_error(params: np.ndarray, freqs: np.ndarray, psd: np.ndarray) -> float:
+    """Error del ajuste para un centro y un ancho dados.
+
+    La altura no la busca el optimizador: para cada (centro, ancho) la mejor
+    altura sale cerrada por mínimos cuadrados, así Nelder-Mead tiene un
+    parámetro menos.
+    """
+    shape = _gaussian(freqs, *params)
+    height = shape @ psd / (shape @ shape) if shape.any() else 0.0
+    error = np.linalg.norm(height * shape - psd)
+    # una altura negativa ajustaría un valle, no un pico
+    return error + 1e6 if height < 0 else error
 
 
 def fit_gaussian_peak(
@@ -79,17 +95,24 @@ def fit_gaussian_peak(
         Centro de la gaussiana ajustada (Hz).
     fwhm : float
         FWHM de la gaussiana ajustada (Hz).
+
+    Notes
+    -----
+    Usamos Nelder-Mead arrancando en (``center0``, ``fwhm0``) porque se queda
+    en el pico más cercano a F0. Con un paso inicial más grande, o con
+    mínimos cuadrados no lineales, el ajuste puede saltar al armónico (2·F0) o
+    no converger.
     """
-    psd = np.asarray(psd, dtype=float)
-    (_, center, fwhm), _ = curve_fit(
-        _gaussian,
-        np.asarray(freqs, dtype=float),
-        psd,
-        p0=[psd.max(), center0, fwhm0],
-        bounds=([0, -np.inf, -np.inf], np.inf),
+    result = minimize(
+        _fit_error,
+        x0=[center0, fwhm0],
+        args=(np.asarray(freqs, dtype=float), np.asarray(psd, dtype=float)),
+        method="Nelder-Mead",
+        options={"xatol": 1e-4, "fatol": 1e-4, "maxiter": 100_000, "maxfev": 10**12},
     )
-    # La gaussiana depende de fwhm², así que el signo no importa.
-    return float(center), float(abs(fwhm))
+    center, fwhm = np.abs(result.x)
+    # la gaussiana depende de fwhm², así que el signo no importa
+    return float(center), float(fwhm)
 
 
 def _band_around(center: float, bandwidth: float) -> tuple[int, int]:
@@ -141,7 +164,7 @@ def estimate_safb(
 
     Notes
     -----
-    **Ancho de banda.** Se usa::
+    Ancho de banda. Se usa::
 
         bandwidth = sqrt(2·ln 2) · ceil(fwhm)
         fl, fh    = round(center ∓ ceil(bandwidth / 2))
@@ -150,11 +173,11 @@ def estimate_safb(
     sqrt(2·ln 2) ≈ 1.177 da una banda ~18 % más ancha que el FWHM que describe
     el paper.
 
-    **Selección del pico.** Solo se ajusta sobre frecuencias dentro de
+    Selección del pico. Solo se ajusta sobre frecuencias dentro de
     ``gamma_band`` y mayores que 0.5·F0, para no incluir la actividad de baja
     frecuencia.
 
-    **Respaldos.** Si la banda estimada no queda dentro de ``noise_band``, se
+    Respaldos. Si la banda estimada no queda dentro de ``noise_band``, se
     usa una banda de 40 Hz centrada en F0; si tampoco queda, una de 40 Hz
     centrada en 120 Hz.
     """

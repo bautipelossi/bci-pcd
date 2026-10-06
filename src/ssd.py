@@ -1,5 +1,5 @@
 """Blanqueo y Spatio-Spectral Decomposition (SSD).
- Primera etapa de PCD
+ Segunda etapa de PCD
  Bautista Pelossi Schweizer
 """
 
@@ -46,7 +46,8 @@ def whiten(X: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     Para el rango se usa la misma tolerancia que ``np.linalg.matrix_rank``
     (autovalor máximo · N_c · eps).
     """
-    X_analytic = hilbert(X, axis=-1)
+    # los NaN (muestras perdidas) los pasamos a 0 para que no rompan Hilbert ni la covarianza
+    X_analytic = hilbert(np.nan_to_num(X), axis=-1)
     X_analytic -= X_analytic.mean(axis=-1, keepdims=True)
 
     eigenvalues, eigenvectors = np.linalg.eigh(np.cov(X_analytic.real))
