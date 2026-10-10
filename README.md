@@ -9,30 +9,15 @@ Implementación en Python de **Phase Coupling Decomposition (PCD)** (Peterson et
 
 ## Índice
 
-1. [Estado](#estado)
-2. [Arquitectura](#arquitectura)
-3. [Estructura del proyecto](#estructura-del-proyecto)
-4. [Instalación](#instalación)
-5. [Ejecución](#ejecución)
-6. [Parámetros](#parámetros)
-7. [Prueba rápida (smoke test)](#prueba-rápida-smoke-test)
-8. [Datos](#datos)
-9. [Validación](#validación)
-10. [Referencias](#referencias)
-
----
-
-## Estado
-
-| Etapa | Módulo | Estado |
-|---|---|---|
-| SAFB | `src/safb.py` | ✅ Validada contra la implementación de los autores |
-| Blanqueo + SSD | `src/ssd.py` | ✅ Validada (mismo subespacio, λ a ~1 %) |
-| PCO | `src/pco.py` | ✅ Mismo objetivo; llega a otro máximo local (ver [Validación](#validación)) |
-| Clase `PCD` + reconstrucción | `src/pcd.py` | ✅ Exacta a precisión de máquina con los mismos filtros |
-| Métricas | `validation/metrics.py` | ✅ MSE, MSCE, PLV, χ, CS de PCA, ITPC |
-| Simulación con ground truth | `validation/simulate.py` | ⏳ Pendiente |
-| Tests | `tests/` | ⏳ Pendiente |
+1. [Arquitectura](#arquitectura)
+2. [Estructura del proyecto](#estructura-del-proyecto)
+3. [Instalación](#instalación)
+4. [Ejecución](#ejecución)
+5. [Parámetros](#parámetros)
+6. [Prueba rápida (smoke test)](#prueba-rápida-smoke-test)
+7. [Datos](#datos)
+8. [Validación](#validación)
+9. [Referencias](#referencias)
 
 ---
 

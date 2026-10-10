@@ -131,12 +131,6 @@ def trial_coherence(X: np.ndarray, z: np.ndarray) -> np.ndarray:
     np.ndarray complejo, forma (N_c,)
         Su argumento es el desfase entre el canal y el audio.
 
-    Notes
-    -----
-    Aplicamos Hilbert al audio y conjugamos, como el código de los autores.
-    Da lo mismo que tomar la señal analítica del canal (ec. 23): Hilbert es
-    antisimétrico, así que Σ x·conj(H{z}) = Σ (x + iH{x})·z. Solo cambia la
-    normalización en un factor √2, que se cancela en el ITPC.
     """
     X = X - X.mean(axis=1, keepdims=True)
     z = z - z.mean()
