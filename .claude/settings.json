@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(PYTHONIOENCODING=utf-8 PYTHONPATH=validation uv run --quiet python -c ' *)",
+      "Bash(PYTHONIOENCODING=utf-8 uv run --quiet python -c ' *)",
+      "PowerShell(Get-ChildItem C:\\\\Users\\\\Bauti\\\\fdi-pln2612 -Recurse -Filter pyproject.toml | ForEach-Object { \"== $\\($_.FullName\\)\"; Get-Content $_.FullName })",
+      "PowerShell($env:PYTHONIOENCODING=\"utf-8\"; uv sync 2>&1 | Out-String; uv run pcd-validar)",
+      "PowerShell(uv run python -c $code 2>$null)"
+    ]
+  }
+}

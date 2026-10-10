@@ -12,6 +12,9 @@ dependencies = [
     "scipy>=1.15.3",
 ]
 
+[project.scripts]
+pcd-validar = "validation.run_validation:main"
+
 [build-system]
 requires = ["uv_build>=0.10.2,<0.11"]
 build-backend = "uv_build"
