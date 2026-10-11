@@ -129,13 +129,15 @@ def trial_coherence(X: np.ndarray, z: np.ndarray) -> np.ndarray:
     Returns
     -------
     np.ndarray complejo, forma (N_c,)
-        Su argumento es el desfase entre el canal y el audio.
+        Su argumento es el desfase entre el canal y el audio. Un canal en
+        cero (por ejemplo, si PCD sacó todas las componentes) da NaN.
 
     """
     X = X - X.mean(axis=1, keepdims=True)
     z = z - z.mean()
     z_analytic = hilbert(z)
-    return (X @ z_analytic.conj()) / (np.linalg.norm(X, axis=1) * np.linalg.norm(z))
+    with np.errstate(invalid="ignore"):
+        return (X @ z_analytic.conj()) / (np.linalg.norm(X, axis=1) * np.linalg.norm(z))
 
 
 def itpc(coherences: np.ndarray) -> np.ndarray:
@@ -156,11 +158,14 @@ def itpc(coherences: np.ndarray) -> np.ndarray:
     la parte real e imaginaria, como el código de los autores, que es con lo
     que se calibró el umbral de 3.08. La ec. 24 del paper divide por el
     desvío, que da un valor √N_t veces menor.
+
+    Los trials con NaN se ignoran en cada canal, también como el código de
+    los autores.
     """
-    n_trials = coherences.shape[0]
-    mean = coherences.mean(axis=0)
+    n_trials = np.sum(~np.isnan(coherences), axis=0)
+    mean = np.nanmean(coherences, axis=0)
     standard_error_sq = (
-        np.var(coherences.real, axis=0, ddof=1) + np.var(coherences.imag, axis=0, ddof=1)
+        np.nanvar(coherences.real, axis=0, ddof=1) + np.nanvar(coherences.imag, axis=0, ddof=1)
     ) / n_trials
     return np.abs(mean) / np.sqrt(standard_error_sq)
 
