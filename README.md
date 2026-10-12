@@ -202,8 +202,6 @@ Los datos son los del repositorio de los autores ([Brain-Modulation-Lab/PCD](htt
 
 Las diferencias en SSD vienen de cómo se arma la banda de ruido (MNE resta el filtrado de la señal; el código original usa band-pass + band-stop) y del padding de los filtros. La de PCO viene de que el problema no es convexo y cada implementación arranca de puntos al azar.
 
-Las métricas de `validation/metrics.py` (MSCE, PLV, χ, CS de PCA, coherencia e ITPC) dan lo mismo que las funciones de MATLAB y del repo original a precisión de máquina. 
-
 ---
 
 ## Referencias
