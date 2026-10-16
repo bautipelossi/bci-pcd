@@ -1,4 +1,4 @@
-# Implementación de Phase Coupling Decomposition para registros intracraneales (iEEG)
+# Implementación de Phase Coupling Decomposition para remoción de artefactos del habla en registros intracraneales (iEEG)
 Bautista Pelossi Schweizer
 
 **Interfaces Cerebro-Computadora (BCI)** · Facultad de Ingeniería Química, Universidad Nacional del Litoral
