@@ -1,5 +1,6 @@
 # Implementación de Phase Coupling Decomposition para remoción de artefactos del habla en registros intracraneales (iEEG)
 Bautista Pelossi Schweizer | **Interfaces Cerebro-Computadora (BCI)** | Facultad de Ingeniería Química, Universidad Nacional del Litoral
+
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![Repo](https://img.shields.io/badge/github-bautipelossi%2Fbci--pcd-black.svg)](https://github.com/bautipelossi/bci-pcd)
 
