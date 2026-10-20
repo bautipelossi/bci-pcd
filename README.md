@@ -1,5 +1,7 @@
 # Implementación de Phase Coupling Decomposition para remoción de artefactos del habla en registros intracraneales (iEEG)
 Bautista Pelossi Schweizer | **Interfaces Cerebro-Computadora (BCI)** | Facultad de Ingeniería Química, Universidad Nacional del Litoral
+[![Python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
+[![Repo](https://img.shields.io/badge/github-bautipelossi%2Ffdi--pln2612-black.svg)](https://github.com/bautipelossi/fdi-pln2612)
 
 Implementación en Python de **Phase Coupling Decomposition (PCD)**, un filtrado espacial supervisado que remueve el artefacto acústico del habla en registros intracraneales (iEEG).(Peterson et al,2024) Tiene cuatro etapas: estimación de la banda del artefacto (**SAFB**), descomposición espacio-espectral (**SSD**), optimización del acoplamiento de fase (**PCO**) y reconstrucción de la señal limpia.
 
@@ -79,7 +81,6 @@ bci-pcd/
 │   ├── metrics.py         ← métricas del paper (MSE, MSCE, PLV, χ, CS, ITPC)
 │   ├── run_validation.py  ← comparación contra la referencia sobre datos reales
 │   └── simulate.py        ← simulación con ground truth conocido
-├── tests/                 ← tests con pytest (pendiente)
 ├── pyproject.toml
 └── README.md
 ```
@@ -202,7 +203,7 @@ Las referencias se generaron corriendo el código original en MATLAB y van en `d
 
 ### Datos reales (`pcd-validar`)
 
-Compara cada etapa contra la implementación de los autores en MATLAB sobre `Data.mat`. Python estima su propia SAFB y su propio k, sin fijar nada de la referencia:
+Compara cada etapa contra la implementación de Peterson et al (2024) en MATLAB sobre `Data.mat`. Python estima su propia SAFB y su propio k, sin fijar nada de la referencia:
 
 | Etapa | Resultado |
 |---|---|
