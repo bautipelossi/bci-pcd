@@ -14,8 +14,7 @@ fuentes neuronales no salen de la red de neuronas LIF sino de ruido 1/f, con
 un aumento de gamma alta durante el habla en algunas fuentes, para que el
 artefacto se solape con actividad fisiológica en la misma banda.
 
-Datos: los audios salen de data/Audio.mat (grabaciones de habla del dataset de
-Bush et al., 2022, NeuroImage 250:118962), y el inicio y el final del habla de
+Datos: los audios salen de data/Audio.mat, y el inicio y el final del habla de
 cada uno, de data/Audio_epochs.txt. Los dos vienen del repositorio de los
 autores. Usamos los 20 primeros audios, uno por trial.
 
@@ -35,7 +34,7 @@ from scipy.io import savemat
 from scipy.signal import butter, sosfiltfilt, welch
 
 from src.pcd import PCD, select_artifact_components
-from validation.metrics import chi_per_channel, msce_in_band, pca_loading_similarity, plv
+from validation.metrics import chi_per_channel, msce_in_band, normalized_mse, pca_loading_similarity, plv
 
 SFREQ = 1000.0
 N_TRIALS = 20
@@ -186,10 +185,15 @@ def evaluate(X_clean: np.ndarray, source: np.ndarray | None, trial: dict, band: 
         "chi_gamma": float(np.median(chi_per_channel(X_clean_gamma, X_gt_gamma))),
         "cs_gamma": pca_loading_similarity(X_gt_gamma, X_clean_gamma),
     }
+    # promedio de CS1-CS3 en el trial; en el resumen se toma la mediana sobre trials
+    result["cs_mean"] = float(result["cs"].mean())
+    result["cs_mean_gamma"] = float(result["cs_gamma"].mean())
     if source is not None:
         # la fuente estimada se compara con el audio en la ventana del habla
         z, estimated = trial["z"][trial["speech"]], source[trial["speech"]]
         result["msce"] = msce_in_band(z, estimated, SFREQ, band)
+        # cada señal dividida por su máximo absoluto, como describe el paper
+        result["mse"] = normalized_mse(z, estimated)
         result["plv"] = plv(bandpass(z, band), bandpass(estimated, band))
     return result
 
@@ -205,7 +209,9 @@ def matlab_cleaning(trial: dict, ref: dict, i: int) -> tuple[np.ndarray, np.ndar
 def summary(results: list[dict], key: str, index: int | None = None) -> str:
     values = np.array([r[key] if index is None else r[key][index] for r in results])
     q1, med, q3 = np.percentile(values, [25, 50, 75])
-    return f"{med:.3f} [{q1:.3f}, {q3:.3f}]"
+    # el MSE normalizado es del orden de 1e-3 y con 3 decimales no se lee
+    fmt = ".1e" if abs(med) < 0.01 else ".3f"
+    return f"{med:{fmt}} [{q1:{fmt}}, {q3:{fmt}}]"
 
 
 def main() -> None:
@@ -244,13 +250,17 @@ def main() -> None:
         (f"gamma alta {HIGH_GAMMA[0]:.0f}-{HIGH_GAMMA[1]:.0f} Hz, durante el habla", "_gamma"),
     ):
         print(f"\n{title}")
-        print(f"{'':16s} {'chi':>22s} {'CS 1':>22s} {'CS 2':>22s} {'CS 3':>22s}")
+        print(f"{'':16s} {'chi':>22s} {'CS 1':>22s} {'CS 2':>22s} {'CS 3':>22s} {'CS prom.':>22s}")
         for name, res in results.items():
-            print(f"{name:16s} {summary(res, 'chi' + suffix):>22s} " + " ".join(f"{summary(res, 'cs' + suffix, j):>22s}" for j in range(3)))
-    print(f"\n{'':16s} {'MSCE en la SAFB':>22s} {'PLV en la SAFB':>22s}")
+            print(
+                f"{name:16s} {summary(res, 'chi' + suffix):>22s} "
+                + " ".join(f"{summary(res, 'cs' + suffix, j):>22s}" for j in range(3))
+                + f" {summary(res, 'cs_mean' + suffix):>22s}"
+            )
+    print(f"\n{'':16s} {'MSE normalizado':>22s} {'MSCE en la SAFB':>22s} {'PLV en la SAFB':>22s}")
     for name, res in results.items():
         if "msce" in res[0]:
-            print(f"{name:16s} {summary(res, 'msce'):>22s} {summary(res, 'plv'):>22s}")
+            print(f"{name:16s} {summary(res, 'mse'):>22s} {summary(res, 'msce'):>22s} {summary(res, 'plv'):>22s}")
 
 
 if __name__ == "__main__":
