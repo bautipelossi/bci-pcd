@@ -79,7 +79,7 @@ bci-pcd/
 │   ├── pcd.py             ← clase PCD: fit / transform / apply
 │   └── __init__.py
 ├── validation/
-│   ├── metrics.py         ← métricas del paper (MSE, MSCE, PLV, χ, CS, ITPC)
+│   ├── metrics.py         ← métricas de validación (MSE, MSCE, PLV, χ, CS, ITPC)
 │   ├── run_validation.py  ← comparación contra la referencia sobre datos reales
 │   └── simulate.py        ← simulación con ground truth conocido
 ├── pyproject.toml
