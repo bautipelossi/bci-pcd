@@ -184,7 +184,9 @@ def estimate_safb(
     f0_mean = float(np.mean(f0))
     freqs, psd = estimate_audio_psd(z, sfreq)
 
-    in_peak = (freqs > gamma_band[0]) & (freqs < gamma_band[1]) & (freqs > 0.5 * f0_mean)
+    in_peak = (
+        (freqs > gamma_band[0]) & (freqs < gamma_band[1]) & (freqs > 0.5 * f0_mean)
+    )
     center, fwhm = fit_gaussian_peak(freqs[in_peak], psd[in_peak], center0=f0_mean)
 
     fl, fh = _band_around(center, np.sqrt(2 * np.log(2)) * math.ceil(fwhm))

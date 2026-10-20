@@ -1,6 +1,6 @@
 """Phase-Coupling Optimization (PCO).
- Tercera etapa de PCD
- Bautista Pelossi Schweizer
+Tercera etapa de PCD
+Bautista Pelossi Schweizer
 """
 
 from __future__ import annotations
@@ -10,7 +10,9 @@ from scipy.linalg import null_space
 from scipy.optimize import minimize
 
 
-def _negative_mvl(w: np.ndarray, X: np.ndarray, z: np.ndarray) -> tuple[float, np.ndarray]:
+def _negative_mvl(
+    w: np.ndarray, X: np.ndarray, z: np.ndarray
+) -> tuple[float, np.ndarray]:
     """-MVL de la componente ``w.T @ X`` y su gradiente respecto de ``w``.
 
     Parameters

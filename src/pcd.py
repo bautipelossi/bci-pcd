@@ -1,6 +1,6 @@
 """Phase Coupling Decomposition (PCD).
- Cuarta etapa de PCD: matrices de separación y mezcla, y reconstrucción
- Bautista Pelossi Schweizer
+Cuarta etapa de PCD: matrices de separación y mezcla, y reconstrucción
+Bautista Pelossi Schweizer
 """
 
 from __future__ import annotations
@@ -133,7 +133,9 @@ class PCD:
         self.n_restarts = n_restarts
         self.random_state = random_state
 
-    def fit(self, X: np.ndarray, z: np.ndarray, f0: float | np.ndarray | None = None) -> PCD:
+    def fit(
+        self, X: np.ndarray, z: np.ndarray, f0: float | np.ndarray | None = None
+    ) -> PCD:
         """Aprende las matrices de separación y mezcla.
 
         Parameters
@@ -155,11 +157,17 @@ class PCD:
         elif f0 is None:
             raise ValueError("Sin signal_band hace falta f0 para estimar la SAFB.")
         else:
-            self.signal_band_ = estimate_safb(z, self.sfreq, f0, noise_band=self.noise_band)
+            self.signal_band_ = estimate_safb(
+                z, self.sfreq, f0, noise_band=self.noise_band
+            )
 
         X_white, self.M_ = whiten(X)
         self.W_ssd_, self.lambda_ssd_ = fit_ssd(
-            X_white.real, self.sfreq, self.signal_band_, self.noise_band, self.filter_order
+            X_white.real,
+            self.sfreq,
+            self.signal_band_,
+            self.noise_band,
+            self.filter_order,
         )
         self.k_ = select_n_components(self.lambda_ssd_, self.n_components)
 

@@ -1,6 +1,6 @@
 """Blanqueo y Spatio-Spectral Decomposition (SSD).
- Segunda etapa de PCD
- Bautista Pelossi Schweizer
+Segunda etapa de PCD
+Bautista Pelossi Schweizer
 """
 
 from __future__ import annotations

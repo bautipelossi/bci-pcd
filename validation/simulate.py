@@ -34,7 +34,13 @@ from scipy.io import savemat
 from scipy.signal import butter, sosfiltfilt, welch
 
 from src.pcd import PCD, select_artifact_components
-from validation.metrics import chi_per_channel, msce_in_band, normalized_mse, pca_loading_similarity, plv
+from validation.metrics import (
+    chi_per_channel,
+    msce_in_band,
+    normalized_mse,
+    pca_loading_similarity,
+    plv,
+)
 
 SFREQ = 1000.0
 N_TRIALS = 20
@@ -66,7 +72,9 @@ def band_power(x: np.ndarray, band: tuple[float, float]) -> np.ndarray:
     return psd[..., in_band].sum(axis=-1)
 
 
-def pink_noise(rng: np.random.Generator, n_sources: int, n_samples: int, exponent: float = 1.5) -> np.ndarray:
+def pink_noise(
+    rng: np.random.Generator, n_sources: int, n_samples: int, exponent: float = 1.5
+) -> np.ndarray:
     """Ruido con espectro 1/f^exponent, filtrado en 2-250 Hz como un iEEG."""
     spectrum = np.fft.rfft(rng.standard_normal((n_sources, n_samples)), axis=1)
     freqs = np.fft.rfftfreq(n_samples, 1 / SFREQ)
@@ -76,13 +84,17 @@ def pink_noise(rng: np.random.Generator, n_sources: int, n_samples: int, exponen
     return noise / noise.std(axis=1, keepdims=True)
 
 
-def neural_sources(rng: np.random.Generator, n_samples: int, speech: slice) -> np.ndarray:
+def neural_sources(
+    rng: np.random.Generator, n_samples: int, speech: slice
+) -> np.ndarray:
     """Fuentes 1/f; las primeras N_GAMMA_SOURCES suben su gamma alta en el habla."""
     sources = pink_noise(rng, N_SOURCES, n_samples)
     envelope = np.zeros(n_samples)
     envelope[speech] = 1.0
     # subida y bajada suaves de 100 ms
-    envelope = np.convolve(envelope, np.hanning(100) / np.hanning(100).sum(), mode="same")
+    envelope = np.convolve(
+        envelope, np.hanning(100) / np.hanning(100).sum(), mode="same"
+    )
     gamma = bandpass(rng.standard_normal((N_GAMMA_SOURCES, n_samples)), (70, 180))
     gamma /= gamma.std(axis=1, keepdims=True)
     sources[:N_GAMMA_SOURCES] += 2 * envelope * gamma
@@ -91,7 +103,11 @@ def neural_sources(rng: np.random.Generator, n_samples: int, speech: slice) -> n
 
 def mixing_matrix(rng: np.random.Generator) -> np.ndarray:
     """Matriz (fuentes + audio) × canales, como generate_mixingmatrix.m."""
-    return -0.5 + rng.random((N_SOURCES + 1, N_CHANNELS)) + rng.standard_normal((N_SOURCES + 1, N_CHANNELS))
+    return (
+        -0.5
+        + rng.random((N_SOURCES + 1, N_CHANNELS))
+        + rng.standard_normal((N_SOURCES + 1, N_CHANNELS))
+    )
 
 
 def audio_epochs() -> list[dict]:
@@ -137,14 +153,16 @@ def simulate(rng: np.random.Generator) -> list[dict]:
         pow_neural = band_power(A[:-1].T @ D[:, speech], (70, 180)).mean()
         scale = pow_artifact / pow_neural * 10 ** (-snr_db / 10)
         sources = np.vstack([np.sqrt(scale) * D, z])
-        trials.append({
-            "X": A.T @ sources,
-            "X_gt": A_gt.T @ sources,
-            "z": z,
-            "speech": speech,
-            "f0": estimate_f0(z[speech]),
-            "snr": int(snr_db),
-        })
+        trials.append(
+            {
+                "X": A.T @ sources,
+                "X_gt": A_gt.T @ sources,
+                "z": z,
+                "speech": speech,
+                "f0": estimate_f0(z[speech]),
+                "snr": int(snr_db),
+            }
+        )
     return trials
 
 
@@ -158,15 +176,22 @@ def save_fit_data(trials: list[dict]) -> None:
         out[:] = arrays
         return out
 
-    savemat(FIT_FILE, {"sim": {
-        "X_fit": cells([t["X"][:, t["speech"]] for t in trials]),
-        "z_fit": cells([t["z"][t["speech"]] for t in trials]),
-        "f0": np.array([t["f0"] for t in trials]),
-        "sf": SFREQ,
-    }})
+    savemat(
+        FIT_FILE,
+        {
+            "sim": {
+                "X_fit": cells([t["X"][:, t["speech"]] for t in trials]),
+                "z_fit": cells([t["z"][t["speech"]] for t in trials]),
+                "f0": np.array([t["f0"] for t in trials]),
+                "sf": SFREQ,
+            }
+        },
+    )
 
 
-def evaluate(X_clean: np.ndarray, source: np.ndarray | None, trial: dict, band: tuple[int, int]) -> dict:
+def evaluate(
+    X_clean: np.ndarray, source: np.ndarray | None, trial: dict, band: tuple[int, int]
+) -> dict:
     """Métricas de una limpieza contra el ground truth del trial.
 
     χ y CS se calculan en banda ancha sobre toda la ventana, y en gamma alta
@@ -198,7 +223,9 @@ def evaluate(X_clean: np.ndarray, source: np.ndarray | None, trial: dict, band: 
     return result
 
 
-def matlab_cleaning(trial: dict, ref: dict, i: int) -> tuple[np.ndarray, np.ndarray, tuple[int, int]]:
+def matlab_cleaning(
+    trial: dict, ref: dict, i: int
+) -> tuple[np.ndarray, np.ndarray, tuple[int, int]]:
     """Limpieza con las matrices de la referencia (patrones en filas)."""
     W, A = ref["W_pcd"][i], ref["A_pcd"][i].T
     keep = np.atleast_1d(ref["idx_keep"][i]).astype(int) - 1
@@ -218,7 +245,9 @@ def main() -> None:
     rng = np.random.default_rng(SEED)
     trials = simulate(rng)
     save_fit_data(trials)
-    print(f"{N_TRIALS} trials | {N_SOURCES} fuentes + audio -> {N_CHANNELS} canales | SNR {SNR_LEVELS[0]} a {SNR_LEVELS[-1]} dB")
+    print(
+        f"{N_TRIALS} trials | {N_SOURCES} fuentes + audio -> {N_CHANNELS} canales | SNR {SNR_LEVELS[0]} a {SNR_LEVELS[-1]} dB"
+    )
     print(f"datos para la referencia: {FIT_FILE}")
 
     results = {"Sin limpiar": [], "CAR": [], "PCD Python": []}
@@ -226,14 +255,25 @@ def main() -> None:
         start = time.perf_counter()
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            pcd = PCD(SFREQ, random_state=0).fit(trial["X"][:, trial["speech"]], trial["z"][trial["speech"]], f0=trial["f0"])
+            pcd = PCD(SFREQ, random_state=0).fit(
+                trial["X"][:, trial["speech"]],
+                trial["z"][trial["speech"]],
+                f0=trial["f0"],
+            )
         X_pcd = pcd.apply(trial["X"])
         band = pcd.signal_band_
         n_removed = len(select_artifact_components(pcd.vlen_, "diff"))
-        print(f"  trial {i + 1:2d}: SNR {trial['snr']:+d} dB | SAFB {band} | k = {pcd.k_} | saca {n_removed} | {time.perf_counter() - start:.0f} s", flush=True)
+        print(
+            f"  trial {i + 1:2d}: SNR {trial['snr']:+d} dB | SAFB {band} | k = {pcd.k_} | saca {n_removed} | {time.perf_counter() - start:.0f} s",
+            flush=True,
+        )
         results["Sin limpiar"].append(evaluate(trial["X"], None, trial, band))
-        results["CAR"].append(evaluate(trial["X"] - trial["X"].mean(axis=0), None, trial, band))
-        results["PCD Python"].append(evaluate(X_pcd, pcd.transform(trial["X"])[0], trial, band))
+        results["CAR"].append(
+            evaluate(trial["X"] - trial["X"].mean(axis=0), None, trial, band)
+        )
+        results["PCD Python"].append(
+            evaluate(X_pcd, pcd.transform(trial["X"])[0], trial, band)
+        )
 
     if MATLAB_RESULTS.exists():
         ref = read_mat(MATLAB_RESULTS)["sim_ref"]
@@ -247,20 +287,29 @@ def main() -> None:
     print("\nmediana [Q1, Q3] sobre los trials")
     for title, suffix in (
         ("banda ancha, ventana completa", ""),
-        (f"gamma alta {HIGH_GAMMA[0]:.0f}-{HIGH_GAMMA[1]:.0f} Hz, durante el habla", "_gamma"),
+        (
+            f"gamma alta {HIGH_GAMMA[0]:.0f}-{HIGH_GAMMA[1]:.0f} Hz, durante el habla",
+            "_gamma",
+        ),
     ):
         print(f"\n{title}")
-        print(f"{'':16s} {'chi':>22s} {'CS 1':>22s} {'CS 2':>22s} {'CS 3':>22s} {'CS prom.':>22s}")
+        print(
+            f"{'':16s} {'chi':>22s} {'CS 1':>22s} {'CS 2':>22s} {'CS 3':>22s} {'CS prom.':>22s}"
+        )
         for name, res in results.items():
             print(
                 f"{name:16s} {summary(res, 'chi' + suffix):>22s} "
                 + " ".join(f"{summary(res, 'cs' + suffix, j):>22s}" for j in range(3))
                 + f" {summary(res, 'cs_mean' + suffix):>22s}"
             )
-    print(f"\n{'':16s} {'MSE normalizado':>22s} {'MSCE en la SAFB':>22s} {'PLV en la SAFB':>22s}")
+    print(
+        f"\n{'':16s} {'MSE normalizado':>22s} {'MSCE en la SAFB':>22s} {'PLV en la SAFB':>22s}"
+    )
     for name, res in results.items():
         if "msce" in res[0]:
-            print(f"{name:16s} {summary(res, 'mse'):>22s} {summary(res, 'msce'):>22s} {summary(res, 'plv'):>22s}")
+            print(
+                f"{name:16s} {summary(res, 'mse'):>22s} {summary(res, 'msce'):>22s} {summary(res, 'plv'):>22s}"
+            )
 
 
 if __name__ == "__main__":

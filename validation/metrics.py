@@ -1,5 +1,5 @@
 """Métricas para validar PCD contra una referencia o un ground truth.
- Bautista Pelossi Schweizer
+Bautista Pelossi Schweizer
 """
 
 from __future__ import annotations
@@ -16,7 +16,9 @@ def abs_cosine(a: np.ndarray, b: np.ndarray) -> np.ndarray:
     En valor absoluto porque los filtros y patrones tienen signo arbitrario.
     """
     a, b = np.atleast_2d(a.T).T, np.atleast_2d(b.T).T
-    cos = np.sum(a * b, axis=0) / (np.linalg.norm(a, axis=0) * np.linalg.norm(b, axis=0))
+    cos = np.sum(a * b, axis=0) / (
+        np.linalg.norm(a, axis=0) * np.linalg.norm(b, axis=0)
+    )
     return np.abs(cos)
 
 
@@ -40,7 +42,9 @@ def channel_correlation(X: np.ndarray, Y: np.ndarray) -> np.ndarray:
     """Correlación de Pearson canal por canal entre ``X`` e ``Y``, forma (N_c, N_s)."""
     Xc = X - X.mean(axis=1, keepdims=True)
     Yc = Y - Y.mean(axis=1, keepdims=True)
-    return np.sum(Xc * Yc, axis=1) / (np.linalg.norm(Xc, axis=1) * np.linalg.norm(Yc, axis=1))
+    return np.sum(Xc * Yc, axis=1) / (
+        np.linalg.norm(Xc, axis=1) * np.linalg.norm(Yc, axis=1)
+    )
 
 
 def normalized_mse(true: np.ndarray, estimated: np.ndarray) -> float:
@@ -51,10 +55,14 @@ def normalized_mse(true: np.ndarray, estimated: np.ndarray) -> float:
     """
     if np.corrcoef(true, estimated)[0, 1] < 0:
         estimated = -estimated
-    return float(np.mean((true / np.abs(true).max() - estimated / np.abs(estimated).max()) ** 2))
+    return float(
+        np.mean((true / np.abs(true).max() - estimated / np.abs(estimated).max()) ** 2)
+    )
 
 
-def msce(true: np.ndarray, estimated: np.ndarray, sfreq: float) -> tuple[np.ndarray, np.ndarray]:
+def msce(
+    true: np.ndarray, estimated: np.ndarray, sfreq: float
+) -> tuple[np.ndarray, np.ndarray]:
     """Coherencia cuadrática (MSCE) entre la fuente verdadera y la estimada.
 
     Returns
@@ -165,12 +173,15 @@ def itpc(coherences: np.ndarray) -> np.ndarray:
     n_trials = np.sum(~np.isnan(coherences), axis=0)
     mean = np.nanmean(coherences, axis=0)
     standard_error_sq = (
-        np.nanvar(coherences.real, axis=0, ddof=1) + np.nanvar(coherences.imag, axis=0, ddof=1)
+        np.nanvar(coherences.real, axis=0, ddof=1)
+        + np.nanvar(coherences.imag, axis=0, ddof=1)
     ) / n_trials
     return np.abs(mean) / np.sqrt(standard_error_sq)
 
 
-def pca_loading_similarity(X_true: np.ndarray, X_est: np.ndarray, n_components: int = 3) -> np.ndarray:
+def pca_loading_similarity(
+    X_true: np.ndarray, X_est: np.ndarray, n_components: int = 3
+) -> np.ndarray:
     """|cos| entre los loadings de PCA de dos registros, componente a componente.
 
     Parameters
@@ -183,9 +194,12 @@ def pca_loading_similarity(X_true: np.ndarray, X_est: np.ndarray, n_components: 
     -------
     np.ndarray, forma (n_components,)
     """
+
     def loadings(X):
         # los canales son las variables: los loadings son los autovectores de cov(X)
-        _, _, Vt = np.linalg.svd((X - X.mean(axis=1, keepdims=True)).T, full_matrices=False)
+        _, _, Vt = np.linalg.svd(
+            (X - X.mean(axis=1, keepdims=True)).T, full_matrices=False
+        )
         return Vt[:n_components].T
 
     return abs_cosine(loadings(X_true), loadings(X_est))
