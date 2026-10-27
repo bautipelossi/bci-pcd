@@ -10,7 +10,7 @@ authors:
     given-names: Bautista
     affiliation: Facultad de Ingeniería Química, Universidad Nacional del Litoral
 version: 0.1.0
-license: BSD-3-Clause
+license: MIT
 repository-code: https://github.com/bautipelossi/bci-pcd
 keywords:
   - iEEG
