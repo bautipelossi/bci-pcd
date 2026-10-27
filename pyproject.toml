@@ -3,6 +3,9 @@ name = "pcd-ieeg"
 version = "0.1.0"
 description = "Phase Coupling Decomposition (PCD) para remover artefactos acústicos del habla en iEEG"
 readme = "README.md"
+license = "BSD-3-Clause"
+license-files = ["LICENSE"]
+authors = [{ name = "Bautista Pelossi Schweizer" }]
 requires-python = ">=3.10"
 dependencies = [
     "mne>=1.12.1",

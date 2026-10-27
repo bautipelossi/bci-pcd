@@ -1,0 +1,47 @@
+cff-version: 1.2.0
+message: >-
+  Si usás este software, citalo con estos datos
+title: >-
+  Implementación de Phase Coupling Decomposition para remoción de artefactos
+  del habla en registros intracraneales (iEEG)
+type: software
+authors:
+  - family-names: Pelossi Schweizer
+    given-names: Bautista
+    affiliation: Facultad de Ingeniería Química, Universidad Nacional del Litoral
+version: 0.1.0
+license: BSD-3-Clause
+repository-code: https://github.com/bautipelossi/bci-pcd
+keywords:
+  - iEEG
+  - speech artifact
+  - phase coupling decomposition
+  - spatial filtering
+  - brain-computer interface
+references:
+  - type: article
+    title: >-
+      A supervised data-driven spatial filter denoising method for
+      acoustic-induced artifacts in intracranial electrophysiological
+      recordings
+    authors:
+      - family-names: Peterson
+        given-names: Victoria
+      - family-names: Vissani
+        given-names: Matteo
+      - family-names: Luo
+        given-names: Shiyu
+      - family-names: Rabbani
+        given-names: Qinwan
+      - family-names: Crone
+        given-names: Nathan E.
+      - family-names: Bush
+        given-names: Alan
+      - family-names: Richardson
+        given-names: R. Mark
+    journal: Imaging Neuroscience
+    volume: 2
+    start: 1
+    end: 22
+    year: 2024
+    doi: 10.1162/imag_a_00301

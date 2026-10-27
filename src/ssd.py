@@ -59,7 +59,8 @@ def whiten(X: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     if rank < X.shape[0]:
         raise ValueError(
             f"Los datos tienen rango {rank} con {X.shape[0]} canales, así que no "
-            "se pueden blanquear. Suele pasar después de una referencia común (CAR) "
+            "se pueden blanquear. Suele pasar después de una referencia común (CAR); "
+            "sacá un canal antes de ajustar."
         )
 
     M = eigenvectors / np.sqrt(eigenvalues)

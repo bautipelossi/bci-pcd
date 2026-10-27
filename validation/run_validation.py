@@ -6,9 +6,9 @@ Uso, desde la raíz del repo:
 
 La referencia (data/reference/matlab_reference.mat) sale de correr el código
 original sobre Data.mat, y data/reference/matlab_safb_trials.mat de estimar la
-SAFB de los 20 trials de DataTrials.mat. La sección 0 estima la SAFB y k por
-Python cuenta y los compara con la referencia; el resto usa esos mismos
-valores, sin fijar nada de la referencia. PCO es no
+SAFB de los 20 trials de DataTrials.mat. La sección 0 estima la SAFB y k en
+Python y los compara con la referencia; el resto usa esos mismos valores, sin
+fijar nada de la referencia. PCO es no
 convexo y arranca de puntos al azar, así que ahí esperamos máximos distintos;
 la sección 4 aísla ese azar usando los filtros PCO de la referencia. La 5
 replica el ejemplo de ITPC de los autores (antes y después de PCD en los 20
@@ -108,7 +108,7 @@ def main() -> None:
         print(f"    {i + 1:2d}: {band_i} | {band_ref_i}{mark} {', '.join(notes)}")
     print(f"  SAFB iguales: {n_equal} de {len(trials)} trials")
 
-    # de acá en adelante todo usa Python propia SAFB y k
+    # de acá en adelante todo usa la SAFB y el k que estimó Python
     pcd = PCD(sfreq, random_state=0).fit(X_fit, z, f0=f0)
     print(f"  k por participation ratio: Python {pcd.k_} | referencia {k}")
     if pcd.signal_band_ != band or pcd.k_ != k:
@@ -141,7 +141,7 @@ def main() -> None:
     print("\n2) PCO")
     print(f"  MVL Python   : {np.round(pcd.vlen_[:6], 3)}")
     print(f"  MVL referencia: {np.round(ref['vlen'][:6], 3)}")
-    # si Python función da el MVL que reporta la referencia para sus propios filtros,
+    # si la función de Python da el MVL que reporta la referencia para sus propios filtros,
     # el objetivo es el mismo y lo que cambia es a qué máximo llega cada optimizador
     mvl_check = [mean_vector_length(ref["W_pcd"][:, j] @ X_fit, z) for j in range(6)]
     print(
@@ -152,7 +152,7 @@ def main() -> None:
         f"  |cos| filtro PCD 1 (el del artefacto): {abs_cosine(pco_ours[:, 0], pco_ref[:, 0])[0]:.4f}"
     )
     # dos componentes con MVL parecido pueden salir en otro orden, así que
-    # también buscamos, para cada filtro de la referencia, el Python más parecido
+    # también buscamos, para cada filtro de la referencia, el de Python más parecido
     gram = np.abs(
         (pco_ref / np.linalg.norm(pco_ref, axis=0)).T
         @ (pco_ours / np.linalg.norm(pco_ours, axis=0))
@@ -160,7 +160,7 @@ def main() -> None:
     for i in range(3):
         j = int(np.argmax(gram[i]))
         print(
-            f"  filtro {i + 1} de la referencia: el más parecido es Python {j + 1} con |cos| {gram[i, j]:.4f}"
+            f"  filtro {i + 1} de la referencia: el más parecido es el {j + 1} de Python con |cos| {gram[i, j]:.4f}"
         )
     # lo que se saca de la señal es el subespacio de los patrones de artefacto
     n_removed = len(removed_ref)
@@ -197,7 +197,7 @@ def main() -> None:
     )
 
     # --- Reconstrucción con los filtros de la referencia ------------------------------
-    # le damos a Python armado las matrices de la referencia (M, W_ssd, W_pco):
+    # le damos al armado de Python las matrices de la referencia (M, W_ssd, W_pco):
     # así sacamos el azar de PCO y probamos solo W_pcd, A_pcd y la reconstrucción
     print("\n4) Reconstrucción con M, W_ssd y W_pco de la referencia")
     same = PCD(sfreq)

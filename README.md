@@ -3,6 +3,7 @@ Bautista Pelossi Schweizer | **Interfaces Cerebro-Computadora (BCI)** | Facultad
 
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![Repo](https://img.shields.io/badge/github-bautipelossi%2Fbci--pcd-black.svg)](https://github.com/bautipelossi/bci-pcd)
+[![Cite](https://img.shields.io/badge/cite-CITATION.cff-blue.svg)](CITATION.cff)
 
 Implementación en Python de **Phase Coupling Decomposition (PCD)**, un filtrado espacial supervisado que remueve el artefacto acústico del habla en registros intracraneales (iEEG).(Peterson et al,2024) Tiene cuatro etapas: estimación de la banda del artefacto (**SAFB**), descomposición espacio-espectral (**SSD**), optimización del acoplamiento de fase (**PCO**) y reconstrucción de la señal limpia.
 
@@ -126,7 +127,6 @@ Cada etapa también se puede usar por separado (`estimate_safb`, `whiten`, `fit_
 uv run pcd-validar                 # validación contra la referencia sobre datos reales
 uv run pcd-validar otra_ref.mat    # con otra referencia
 uv run pcd-simular                 # simulación con ground truth (PCD, referencia y CAR)
-uv run pytest                      # tests
 ```
 
 Los comandos están definidos en `[project.scripts]` del `pyproject.toml`. Se corren desde la raíz del repo porque leen los datos de `data/`.
