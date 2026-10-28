@@ -4,7 +4,6 @@ Bautista Pelossi Schweizer | **Interfaces Cerebro-Computadora (BCI)** | Facultad
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![Repo](https://img.shields.io/badge/github-bautipelossi%2Fbci--pcd-black.svg)](https://github.com/bautipelossi/bci-pcd)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Cite](https://img.shields.io/badge/cite-CITATION.cff-blue.svg)](CITATION.cff)
 
 Implementación en Python de **Phase Coupling Decomposition (PCD)**, un filtrado espacial supervisado que remueve el artefacto acústico del habla en registros intracraneales (iEEG).(Peterson et al,2024) Tiene cuatro etapas: estimación de la banda del artefacto (**SAFB**), descomposición espacio-espectral (**SSD**), optimización del acoplamiento de fase (**PCO**) y reconstrucción de la señal limpia.
 
