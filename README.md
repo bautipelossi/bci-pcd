@@ -91,7 +91,7 @@ bci-pcd/
 
 ## Instalación
 
-Requiere Python ≥ 3.10 y [`uv`](https://github.com/astral-sh/uv).
+Requiere Python ≥ 3.11 y [`uv`](https://github.com/astral-sh/uv).
 
 ```bash
 uv sync
