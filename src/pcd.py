@@ -53,9 +53,13 @@ def select_artifact_components(
             # si no hay ningún salto chico no hay codo y no sacamos nada
             return np.arange(small[0] + 1 if small.size else 0)
         raise ValueError(f"n_remove='{n_remove}' no existe; usar 'PR' o 'diff'.")
-    if isinstance(n_remove, float):
+    # bool es subclase de int: True sacaría la primera componente sin querer
+    if isinstance(n_remove, (bool, np.bool_)):
+        raise TypeError("n_remove no puede ser un bool; usar un int, un float, 'PR', 'diff', índices o None.")
+    # también los escalares de numpy (np.int64, np.float32), que no son int ni float de Python
+    if isinstance(n_remove, (float, np.floating)):
         return np.flatnonzero(vlen > n_remove)
-    if isinstance(n_remove, int):
+    if isinstance(n_remove, (int, np.integer)):
         return np.arange(n_remove)
     return np.asarray(n_remove, dtype=int)
 
@@ -221,4 +225,5 @@ class PCD:
         """
         artifact = select_artifact_components(self.vlen_, n_remove)
         keep = np.setdiff1d(np.arange(X.shape[0]), artifact)
-        return self.A_pcd_[:, keep] @ self.W_pcd_[:, keep].T @ X
+        # NaN a 0, igual que en transform
+        return self.A_pcd_[:, keep] @ self.W_pcd_[:, keep].T @ np.nan_to_num(X)

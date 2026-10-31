@@ -21,9 +21,8 @@ keywords:
 references:
   - type: article
     title: >-
-      A supervised data-driven spatial filter denoising method for
-      acoustic-induced artifacts in intracranial electrophysiological
-      recordings
+      A supervised data-driven spatial filter denoising method for speech
+      artifacts in intracranial electrophysiological recordings
     authors:
       - family-names: Peterson
         given-names: Victoria
@@ -41,7 +40,6 @@ references:
         given-names: R. Mark
     journal: Imaging Neuroscience
     volume: 2
-    start: 1
-    end: 22
+    number: imag-2-00301
     year: 2024
     doi: 10.1162/imag_a_00301
