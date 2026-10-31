@@ -5,7 +5,7 @@ Bautista Pelossi Schweizer | **Interfaces Cerebro-Computadora (BCI)** | Facultad
 [![Repo](https://img.shields.io/badge/github-bautipelossi%2Fbci--pcd-black.svg)](https://github.com/bautipelossi/bci-pcd)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Implementación en Python de **Phase Coupling Decomposition (PCD)**, un filtrado espacial supervisado que remueve el artefacto acústico del habla en registros intracraneales (iEEG).(Peterson et al,2024) Tiene cuatro etapas: estimación de la banda del artefacto (**SAFB**), descomposición espacio-espectral (**SSD**), optimización del acoplamiento de fase (**PCO**) y reconstrucción de la señal limpia.
+Implementación en Python de **Phase Coupling Decomposition (PCD)**, un filtrado espacial supervisado que remueve el artefacto acústico del habla en registros intracraneales (iEEG) (Peterson et al., 2024). Tiene cuatro etapas: estimación de la banda del artefacto (**SAFB**), descomposición espacio-espectral (**SSD**), optimización del acoplamiento de fase (**PCO**) y reconstrucción de la señal limpia.
 
 ---
 
@@ -204,7 +204,7 @@ Las referencias se generaron corriendo el código original en MATLAB y van en `d
 
 ### Datos reales (`pcd-validar`)
 
-Compara cada etapa contra la implementación de Peterson et al (2024) en MATLAB sobre `Data.mat`. Python estima su propia SAFB y su propio k, sin fijar nada de la referencia:
+Compara cada etapa contra la implementación de Peterson et al. (2024) en MATLAB sobre `Data.mat`. Python estima su propia SAFB y su propio k, sin fijar nada de la referencia:
 
 | Etapa | Resultado |
 |---|---|
@@ -247,5 +247,5 @@ Las dos implementaciones recuperan la fuente del artefacto con la misma fidelida
 
 ## Referencias
 
-- Peterson, V., Vissani, M., Luo, S., Rabbani, Q., Crone, N. E., Bush, A., & Richardson, R. M. (2024). A supervised data-driven spatial filter denoising method for acoustic-induced artifacts in intracranial electrophysiological recordings. *Imaging Neuroscience*, 2, 1–22. [doi:10.1162/imag_a_00301](https://doi.org/10.1162/imag_a_00301)
+- Peterson, V., Vissani, M., Luo, S., Rabbani, Q., Crone, N. E., Bush, A., & Richardson, R. M. (2024). A supervised data-driven spatial filter denoising method for speech artifacts in intracranial electrophysiological recordings. *Imaging Neuroscience*, 2, imag-2-00301. [doi:10.1162/imag_a_00301](https://doi.org/10.1162/imag_a_00301)
 - Bush, A., Chrabaszcz, A., Peterson, V., Saravanan, V., Dastolfo-Hromack, C., Lipski, W. J., & Richardson, R. M. (2022). Differentiation of speech-induced artifacts from physiological high gamma activity in intracranial recordings. *NeuroImage*, 250, 118962.
