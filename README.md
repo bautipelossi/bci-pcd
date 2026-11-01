@@ -187,7 +187,7 @@ Los datos son los del repositorio de los autores ([Brain-Modulation-Lab/PCD](htt
 | `DataTrials.mat` | 20 trials reales de dos canales, para el ITPC |
 | `Audio.mat`, `Audio_epochs.txt` | Audios de habla del dataset de Bush et al. (2022) y el inicio y fin del habla de cada uno, para la simulación |
 
-Las referencias se generaron corriendo el código original en MATLAB y van en `data/reference/`:
+Las referencias se generaron corriendo el código original en MATLAB y van en `data/reference/`. Las mismas se pueden descargar del [release v1.0](https://github.com/bautipelossi/bci-pcd/releases/tag/v1.0):
 
 | Archivo | Contenido | Lo usa |
 |---|---|---|
